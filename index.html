@@ -3,248 +3,359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nền Tảng Học Tập Trực Tuyến</title>
+    <title>Tin Tức Logistics Mới Nhất</title>
+    <!-- Tải Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Sử dụng font Inter */
+        html {
+            scroll-behavior: smooth;
+        }
         body {
             font-family: 'Inter', sans-serif;
         }
-        .unit-active {
-            background-color: #4f46e5;
+        /* CSS cho hiệu ứng loading spinner */
+        .loader {
+            border: 5px solid #f3f3f3; /* Light grey */
+            /* Cập nhật màu spinner cho hợp với theme */
+            border-top: 5px solid #3b82f6; /* blue-500 */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Cập nhật kiểu cho nút tab */
+        .tab-active {
+            background-color: #3b82f6; /* blue-500 */
             color: white;
-            border-left-color: #a5b4fc;
+            font-weight: 600;
+            /* Thêm hiệu ứng nổi bật */
+            transform: scale(1.05);
+            box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.3);
+        }
+        .tab-inactive {
+            background-color: white;
+            color: #374151; /* gray-700 */
+            /* Thêm viền và bóng mờ */
+            border: 1px solid #d1d5db; /* gray-300 */
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
         }
     </style>
+    <!-- Tải font Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-100 text-gray-800">
+<!-- Thêm nền gradient tinh tế -->
+<body class="bg-gradient-to-br from-gray-50 to-blue-100 min-h-screen">
 
-    <div class="container mx-auto p-4 md:p-8">
-        
-        <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-indigo-700">Khóa học Tiếng Anh Giao Tiếp</h1>
-            <p class="text-gray-600 mt-2">Chọn một bài học bên dưới để bắt đầu học.</p>
+    <div class="container mx-auto max-w-4xl p-4 md:p-8">
+        <!-- Tiêu đề được làm nổi bật hơn -->
+        <header class="mb-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-800 bg-clip-text text-transparent pb-2">
+                Tin Tức Logistics Mới Nhất
+            </h1>
+            <p class="text-gray-700 mt-2 text-lg">
+                Cập nhật tin tức mới nhất từ trong nước và quốc tế.
+            </p>
         </header>
 
-        <div class="flex flex-col md:flex-row gap-8">
+        <!-- Các nút chọn với hiệu ứng transition -->
+        <nav class="flex justify-center space-x-4 mb-8">
+            <button id="domesticBtn" class="px-6 py-3 rounded-lg transition-all duration-300 ease-in-out tab-active">
+                Trong Nước
+            </button>
+            <button id="internationalBtn" class="px-6 py-3 rounded-lg transition-all duration-300 ease-in-out tab-inactive">
+                Quốc Tế
+            </button>
+        </nav>
 
-            <aside class="w-full md:w-1/4">
-                <div class="bg-white rounded-lg shadow-md p-4">
-                    <h2 class="text-xl font-semibold mb-4 border-b pb-2">Danh sách bài học</h2>
-                    <nav id="unit-list" class="space-y-2">
-                        <!-- Các unit sẽ được JS chèn vào đây -->
-                    </nav>
-                </div>
-            </aside>
+        <!-- Khu vực hiển thị nội dung -->
+        <main id="contentArea">
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner" class="loader" style="display: none;"></div>
+            
+            <!-- Hiển thị lỗi -->
+            <div id="errorMessage" class="hidden text-center text-red-600 bg-red-100 p-4 rounded-lg shadow-md">
+                <!-- Nội dung lỗi sẽ được chèn vào đây -->
+            </div>
 
-            <main class="w-full md:w-3/4">
-                <div id="content-display" class="bg-white rounded-lg shadow-md p-6 min-h-[500px]">
-                    <!-- Nội dung của unit được chọn sẽ hiển thị ở đây -->
-                    <div class="flex flex-col items-center justify-center h-full text-center text-gray-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <h2 class="text-2xl font-semibold">Chào mừng bạn!</h2>
-                        <p>Vui lòng chọn một bài học từ danh sách bên trái để xem nội dung.</p>
-                    </div>
-                </div>
-            </main>
+            <!-- Nội dung tin tức -->
+            <div id="newsContent" class="space-y-5">
+                <!-- Tin tức sẽ được chèn vào đây -->
+            </div>
 
-        </div>
+            <!-- Nguồn tin (từ Google Search) -->
+            <div id="sourcesContainer" class="hidden mt-10 border-t-2 border-gray-200 pt-6">
+                <h3 class="font-semibold text-xl text-gray-800 mb-4">Nguồn tin tham khảo:</h3>
+                <ul id="sourcesList" class="list-disc list-inside text-sm text-blue-600 space-y-2">
+                    <!-- Nguồn sẽ được chèn vào đây -->
+                </ul>
+            </div>
+        </main>
     </div>
 
     <script>
-        // --- DỮ LIỆU MẪU CHO KHÓA HỌC ---
-        const courseData = {
-            "unit1": {
-                title: "Unit 1: Chào hỏi & Giới thiệu",
-                description: "Học các cách chào hỏi, giới thiệu bản thân và người khác một cách tự nhiên.",
-                sections: {
-                    "listening_speaking": {
-                        title: "1. Listening & Speaking",
-                        videos: [
-                            { id: "v1_ls_1", title: "Video: Hội thoại mẫu (Ví dụ YouTube)", url: "https://www.youtube.com/watch?v=hRzGZ_OXgA8" }
-                        ],
-                        audios: [
-                            // Mục này không có title, tên sẽ được tạo tự động
-                            { id: "a1_ls_1", title: "PathwaysLS3e_LF_U1_SB_Audio_01_A_p4", url: "https://drive.google.com/file/d/1yrZSrdggdMvZFVa9u9Okqch4cWwLv9Kw/view?usp=sharing" },
-                            // Mục này có title, sẽ giữ nguyên tên bạn đặt
-                            { id: "a1_ls_2", title: "Audio: Nghe và lặp lại đoạn hội thoại", url: "#" }
-                        ],
-                        documents: [
-                             { id: "d1_ls_1", title: "PDF: Script và bài tập nghe", url: "https://drive.google.com/file/d/1bxav1D07vwOsoLBx5mNjTlYq5U2dgHe6/view?usp=sharing" }
-                        ]
-                    },
-                    "reading_writing": {
-                        title: "2. Reading & Writing",
-                        videos: [
-                            // Ví dụ video không có tiêu đề
-                            { id: "v1_rw_1", title: "", url: "#" }
-                        ],
-                        audios: [
-                            { id: "a1_rw_1", title: "Audio: Nghe bài đọc mẫu", url: "#" }
-                        ],
-                        documents: [
-                            { id: "d1_rw_1", title: "PDF: Tổng hợp từ vựng và ngữ pháp", url: "#" },
-                            { id: "d1_rw_2", title: "PDF: Bài tập viết câu giới thiệu", url: "#" }
-                        ]
+        // Lấy các phần tử DOM
+        const domesticBtn = document.getElementById('domesticBtn');
+        const internationalBtn = document.getElementById('internationalBtn');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const newsContent = document.getElementById('newsContent');
+        const errorMessage = document.getElementById('errorMessage');
+        const sourcesContainer = document.getElementById('sourcesContainer');
+        const sourcesList = document.getElementById('sourcesList');
+
+        // Khóa API (Để trống, Canvas sẽ tự động cung cấp)
+        const apiKey = "";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+        // System prompt cho mô hình Gemini
+        const systemPrompt = `Bạn là một biên tập viên tin tức logistics chuyên nghiệp.
+Hãy trả về 5 tin tức mới nhất dựa trên truy vấn của người dùng.
+ĐỊNH DẠNG TRẢ LỜI BẮT BUỘC:
+Mỗi tin tức phải theo cấu trúc sau, cách nhau bởi dấu ||:
+Tiêu đề: [Tiêu đề tin tức]||Tóm tắt: [Tóm tắt ngắn gọn trong 1-2 câu]||Nguồn: [Tên nguồn tin]||URL: https://webnhanh.vn/resources/theme/web-khac/
+Các tin tức phải cách nhau bằng một dòng mới.
+KHÔNG thêm bất kỳ lời chào, lời dẫn hay kết luận nào. Chỉ trả về dữ liệu tin tức.`;
+
+        /**
+         * Hàm gọi API với cơ chế thử lại (exponential backoff)
+         */
+        async function fetchWithBackoff(url, options, retries = 3, delay = 1000) {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    // Nếu lỗi do máy chủ (5xx) hoặc quá tải (429), thử lại
+                    if (response.status === 429 || response.status >= 500) {
+                        throw new Error(`Server error: ${response.status}`);
                     }
+                    // Các lỗi khác (4xx) thì không thử lại
+                    const errData = await response.json();
+                    throw new Error(errData.error?.message || `Lỗi ${response.status}`);
                 }
-            },
-            "unit2": { 
-                title: "Unit 2: Gia đình & Bạn bè",
-                description: "Mô tả về các thành viên trong gia đình và cách nói về các mối quan hệ.",
-                videos: [ { id: "v2_1", title: "Video: Thuyết trình về cây gia phả", url: "#" } ],
-                audios: [],
-                documents: [ { id: "d2_1", title: "PDF: Từ vựng về các mối quan hệ", url: "#" } ]
-            },
-            "unit3": {
-                title: "Unit 3: Sở thích & Hoạt động",
-                description: "Học cách nói về sở thích, các hoạt động thường ngày và vào thời gian rảnh.",
-                videos: [ { id: "v3_1", title: "Video: Phỏng vấn về các hoạt động cuối tuần", url: "#" } ],
-                audios: [ { id: "a3_1", title: "Audio: Nghe và điền từ vào chỗ trống", url: "#" } ],
-                documents: []
+                return response.json();
+            } catch (error) {
+                if (retries > 0) {
+                    // Chờ và thử lại
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return fetchWithBackoff(url, options, retries - 1, delay * 2);
+                } else {
+                    // Hết số lần thử
+                    console.error("API call failed after retries:", error);
+                    throw error;
+                }
             }
-        };
-
-        const unitListContainer = document.getElementById('unit-list');
-        const contentDisplayContainer = document.getElementById('content-display');
-
-        function renderUnitList() {
-            let html = '';
-            for (const unitId in courseData) {
-                const unit = courseData[unitId];
-                html += `<button data-unit="${unitId}" class="unit-btn w-full text-left px-4 py-3 rounded-md transition-colors duration-200 border-l-4 border-transparent hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"><span class="font-semibold">${unit.title}</span></button>`;
-            }
-            unitListContainer.innerHTML = html;
         }
 
-        const createSectionHTML = (title, items, icon) => {
-            if (!items || items.length === 0) return '';
-            const openInNewTabIcon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 group-hover:text-indigo-600 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>`;
-            
-            let itemsHtml = items.map(item => {
-                let displayTitle = item.title; 
+        /**
+         * Hàm lấy tin tức từ Gemini API
+         */
+        async function fetchNews(query) {
+            // 1. Đặt trạng thái tải
+            setLoadingState(true);
 
-                const isMedia = title.toLowerCase().includes('video') || title.toLowerCase().includes('audio');
-                
-                if (isMedia && (!item.title || item.title.trim() === '')) {
-                    const resourceType = title.toLowerCase().includes('video') ? 'Video' : 'Audio';
-                    if (item.url.includes('youtube.com') || item.url.includes('youtu.be')) {
-                        displayTitle = `${resourceType} từ YouTube`;
-                    } else if (item.url.includes('drive.google.com')) {
-                        displayTitle = `${resourceType} từ Google Drive`;
-                    } else if (item.url === '#') {
-                         displayTitle = `${resourceType} mẫu`;
-                    } else {
-                        displayTitle = `${resourceType} không có tiêu đề`;
+            // 2. Xây dựng payload
+            const payload = {
+                contents: [{ parts: [{ text: query }] }],
+                tools: [{ "google_search": {} }], // Bật Google Search
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            // 3. Gọi API
+            try {
+                const result = await fetchWithBackoff(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const candidate = result.candidates?.[0];
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    const textResponse = candidate.content.parts[0].text;
+                    const newsArray = parseNewsText(textResponse);
+                    
+                    // Lấy nguồn từ metadata
+                    let sources = [];
+                    const groundingMetadata = candidate.groundingMetadata;
+                    if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                        sources = groundingMetadata.groundingAttributions
+                            .map(attr => ({
+                                uri: attr.web?.uri,
+                                title: attr.web?.title,
+                            }))
+                            .filter(source => source.uri && source.title);
                     }
+
+                    displayNews(newsArray, sources);
+                } else {
+                    throw new Error("Không nhận được nội dung tin tức hợp lệ từ API.");
                 }
-                
-                return `
-                <li class="border-b last:border-b-0">
-                    <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="w-full flex items-center p-3 hover:bg-gray-50 rounded-md transition-colors duration-200 group text-left">
-                        ${icon}
-                        <span class="flex-grow ml-3">${displayTitle}</span>
-                        ${openInNewTabIcon}
-                    </a>
-                </li>`;
-            }).join('');
-            return `<div class="mb-6"><h3 class="text-xl font-semibold text-gray-700 mb-3">${title}</h3><ul class="border rounded-md">${itemsHtml}</ul></div>`;
-        };
-
-        function renderSectionChoices(unit, unitId) {
-            let sectionButtonsHtml = '<h3 class="text-xl font-semibold text-gray-700 mb-4">Vui lòng chọn một phần học:</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
-            for (const sectionId in unit.sections) {
-                const section = unit.sections[sectionId];
-                sectionButtonsHtml += `<button data-unit-id="${unitId}" data-section-id="${sectionId}" class="section-btn text-left p-6 bg-gray-50 hover:bg-indigo-100 rounded-lg border border-gray-200 transition-all duration-200 hover:border-indigo-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"><span class="font-bold text-lg text-indigo-700">${section.title}</span></button>`;
+            } catch (error) {
+                console.error("Lỗi khi lấy tin tức:", error);
+                displayError("Rất tiếc, đã xảy ra lỗi khi tải tin tức. Vui lòng thử lại sau.");
+            } finally {
+                // 4. Tắt trạng thái tải
+                setLoadingState(false);
             }
-            sectionButtonsHtml += '</div>';
-            document.getElementById('unit-content-area').innerHTML = sectionButtonsHtml;
         }
 
-        function renderSectionContent(unit, unitId, sectionId) {
-            const section = unit.sections[sectionId];
-            const videoIcon = `<div class="w-8 h-8 flex-shrink-0 bg-red-100 text-red-600 rounded-full flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 001.553.832l3-2a1 1 0 000-1.664l-3-2z" /></svg></div>`;
-            const audioIcon = `<div class="w-8 h-8 flex-shrink-0 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v1.268a2 2 0 010 3.464V16a1 1 0 11-2 0V8.732a2 2 0 010-3.464V4a1 1 0 011-1z" /></svg></div>`;
-            const docIcon = `<div class="w-8 h-8 flex-shrink-0 bg-green-100 text-green-600 rounded-full flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg></div>`;
-            
-            const backButtonHtml = `<button data-unit-id="${unitId}" class="back-to-sections-btn mb-6 flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-800"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>Quay lại chọn phần</button>`;
-            const listsHtml = `
-                <div class="space-y-6">
-                    ${createSectionHTML('Video bài giảng', section.videos, videoIcon)}
-                    ${createSectionHTML('Audio luyện nghe', section.audios, audioIcon)}
-                    ${createSectionHTML('Tài liệu học tập', section.documents, docIcon)}
-                </div>`;
-            document.getElementById('unit-content-area').innerHTML = backButtonHtml + listsHtml;
+        /**
+         * Hàm phân tích văn bản trả về từ API thành mảng object
+         */
+        function parseNewsText(text) {
+            const articles = [];
+            const lines = text.split('\n').filter(line => line.trim().length > 0);
+
+            for (const line of lines) {
+                const parts = line.split('||');
+                // Yêu cầu 4 phần (Tiêu đề, Tóm tắt, Nguồn, URL)
+                if (parts.length === 4) {
+                    try {
+                        const title = parts[0].replace('Tiêu đề:', '').trim();
+                        const summary = parts[1].replace('Tóm tắt:', '').trim();
+                        const source = parts[2].replace('Nguồn:', '').trim();
+                        const urlPart = parts[3].replace('URL:', '').trim();
+                        
+                        // Chỉ lấy url nếu nó bắt đầu bằng http, ngược lại dùng '#'
+                        const url = (urlPart.startsWith('http')) ? urlPart : '#';
+                        
+                        if (title && summary) { // Nguồn có thể không có
+                            articles.push({ title, summary, source, url });
+                        }
+                    } catch (e) {
+                        console.warn("Bỏ qua dòng định dạng không chính xác:", line);
+                    }
+                } else {
+                    console.warn("Định dạng dòng không mong đợi (cần 4 phần):", line);
+                }
+            }
+            return articles;
         }
 
-        function renderUnitContent(unitId) {
-            const unit = courseData[unitId];
-            if (!unit) return;
+        /**
+         * Hàm hiển thị tin tức lên giao diện
+         */
+        function displayNews(newsArray, sources) {
+            newsContent.innerHTML = ''; // Xóa nội dung cũ
 
-            const contentHtml = `
-                <div id="unit-details">
-                    <div class="border-b pb-4 mb-6"><h2 class="text-2xl md:text-3xl font-bold text-indigo-600">${unit.title}</h2><p class="text-gray-600 mt-1">${unit.description}</p></div>
-                    <div id="unit-content-area"></div>
-                </div>`;
-            contentDisplayContainer.innerHTML = contentHtml;
-            
-            const unitContentArea = document.getElementById('unit-content-area');
-            if (unit.sections) {
-                renderSectionChoices(unit, unitId);
+            if (newsArray.length === 0) {
+                newsContent.innerHTML = `<p class="text-center text-gray-500">Không tìm thấy tin tức nào.</p>`;
+            }
+
+            newsArray.forEach(news => {
+                const card = document.createElement('article');
+                // Cập nhật class cho card tin tức
+                const hasLink = news.url && news.url !== '#';
+                card.className = `bg-white p-5 rounded-lg shadow-lg border-l-4 border-blue-500 transition-all duration-300 hover:shadow-xl ${hasLink ? 'hover:scale-[1.02]' : 'hover:scale-[1.01]'}`;
+                
+                let titleElement;
+                if (hasLink) {
+                    // Nếu có link, làm cho tiêu đề có thể nhấp
+                    titleElement = `
+                        <a href="${news.url}" target="_blank" rel="noopener noreferrer" class="block text-xl font-semibold text-indigo-700 mb-2 hover:text-blue-600 hover:underline">
+                            ${news.title}
+                        </a>
+                    `;
+                } else {
+                    // Nếu không có link, chỉ là văn bản
+                    titleElement = `
+                        <h2 class="text-xl font-semibold text-indigo-700 mb-2">${news.title}</h2>
+                    `;
+                }
+
+                // Cập nhật HTML bên trong card
+                card.innerHTML = `
+                    ${titleElement}
+                    <p class="text-gray-700 mb-4">${news.summary}</p>
+                    ${news.source ? `<div class="mt-3"><span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium">Nguồn: ${news.source}</span></div>` : ''}
+                `;
+                newsContent.appendChild(card);
+            });
+
+            // Hiển thị nguồn tham khảo
+            displaySources(sources);
+        }
+
+        /**
+         * Hiển thị nguồn tham khảo từ groundingMetadata
+         */
+        function displaySources(sources) {
+            sourcesList.innerHTML = ''; // Xóa nguồn cũ
+            if (sources.length > 0) {
+                sourcesContainer.classList.remove('hidden');
+                sources.forEach(source => {
+                    const li = document.createElement('li');
+                    // Thêm style cho nguồn
+                    li.innerHTML = `<a href="${source.uri}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 hover:underline">${source.title}</a>`;
+                    sourcesList.appendChild(li);
+                });
             } else {
-                 const videoIcon = `<div class="w-8 h-8 flex-shrink-0 bg-red-100 text-red-600 rounded-full flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 001.553.832l3-2a1 1 0 000-1.664l-3-2z" /></svg></div>`;
-                const audioIcon = `<div class="w-8 h-8 flex-shrink-0 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v1.268a2 2 0 010 3.464V16a1 1 0 11-2 0V8.732a2 2 0 010-3.464V4a1 1 0 011-1z" /></svg></div>`;
-                const docIcon = `<div class="w-8 h-8 flex-shrink-0 bg-green-100 text-green-600 rounded-full flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg></div>`;
-                unitContentArea.innerHTML = `
-                    <div class="space-y-6">
-                        ${createSectionHTML('Video bài giảng', unit.videos, videoIcon)}
-                        ${createSectionHTML('Audio luyện nghe', unit.audios, audioIcon)}
-                        ${createSectionHTML('Tài liệu học tập', unit.documents, docIcon)}
-                    </div>`;
+                sourcesContainer.classList.add('hidden');
             }
         }
 
-        unitListContainer.addEventListener('click', (event) => {
-            const button = event.target.closest('.unit-btn');
-            if (!button) return;
-            const unitId = button.dataset.unit;
-            document.querySelectorAll('.unit-btn').forEach(btn => btn.classList.remove('unit-active'));
-            button.classList.add('unit-active');
-            renderUnitContent(unitId);
-        });
-        
-        contentDisplayContainer.addEventListener('click', (event) => {
-            const sectionButton = event.target.closest('.section-btn');
-            if (sectionButton) {
-                const unitId = sectionButton.dataset.unitId;
-                const sectionId = sectionButton.dataset.sectionId;
-                const unit = courseData[unitId];
-                renderSectionContent(unit, unitId, sectionId);
-                return;
+        /**
+         * Hàm đặt trạng thái tải (loading)
+         */
+        function setLoadingState(isLoading) {
+            if (isLoading) {
+                loadingSpinner.style.display = 'block';
+                newsContent.innerHTML = ''; // Xóa tin tức cũ
+                errorMessage.classList.add('hidden'); // Ẩn lỗi
+                sourcesContainer.classList.add('hidden'); // Ẩn nguồn
+            } else {
+                loadingSpinner.style.display = 'none';
             }
-            const backButton = event.target.closest('.back-to-sections-btn');
-            if (backButton) {
-                const unitId = backButton.dataset.unitId;
-                const unit = courseData[unitId];
-                renderSectionChoices(unit, unitId);
-                return;
+        }
+
+        /**
+         * Hàm hiển thị thông báo lỗi
+         */
+        function displayError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.remove('hidden');
+            newsContent.innerHTML = ''; // Đảm bảo không có tin tức nào hiển thị
+        }
+
+        /**
+         * Hàm cập nhật giao diện nút tab
+         */
+        function updateTabs(activeTab) {
+            if (activeTab === 'domestic') {
+                domesticBtn.classList.replace('tab-inactive', 'tab-active');
+                internationalBtn.classList.replace('tab-active', 'tab-inactive');
+            } else {
+                internationalBtn.classList.replace('tab-inactive', 'tab-active');
+                domesticBtn.classList.replace('tab-active', 'tab-inactive');
             }
+        }
+
+        // Thêm sự kiện click cho các nút
+        domesticBtn.addEventListener('click', () => {
+            updateTabs('domestic');
+            fetchNews("Tin tức logistics mới nhất tại Việt Nam");
         });
 
-        window.addEventListener('DOMContentLoaded', () => {
-            renderUnitList();
-            const firstUnitButton = unitListContainer.querySelector('.unit-btn');
-            if (firstUnitButton) {
-                firstUnitButton.click();
-            }
+        internationalBtn.addEventListener('click', () => {
+            updateTabs('international');
+            fetchNews("Tin tức logistics quốc tế mới nhất");
+        });
+
+        // Tải tin tức trong nước khi trang vừa mở
+        window.addEventListener('load', () => {
+            fetchNews("Tin tức logistics mới nhất tại Việt Nam");
         });
 
     </script>
 </body>
 </html>
+
 
