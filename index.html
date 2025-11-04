@@ -3,360 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tin Tức Logistics Mới Nhất</title>
+    <title>Bảng Tiền Tiết Kiệm</title>
     <!-- Tải Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Sử dụng font Inter */
-        html {
-            scroll-behavior: smooth;
-        }
+        /* Tùy chỉnh font chữ Inter */
         body {
             font-family: 'Inter', sans-serif;
-        }
-        /* CSS cho hiệu ứng loading spinner */
-        .loader {
-            border: 5px solid #f3f3f3; /* Light grey */
-            /* Cập nhật màu spinner cho hợp với theme */
-            border-top: 5px solid #3b82f6; /* blue-500 */
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 2rem auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            background-color: #f3f4f6; /* Nền xám rất nhạt (màu trắng) */
+            color: #111827; /* Chữ xám đen */
         }
         
-        /* Cập nhật kiểu cho nút tab */
-        .tab-active {
-            background-color: #3b82f6; /* blue-500 */
-            color: white;
-            font-weight: 600;
-            /* Thêm hiệu ứng nổi bật */
-            transform: scale(1.05);
-            box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.3);
+        /* Tùy chỉnh cho các ô */
+        .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-width: 1px;
+            border-color: #d1d5db; /* Viền xám nhạt */
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            font-weight: 500;
+            aspect-ratio: 1 / 1; /* Giữ cho ô vuông */
+            user-select: none; /* Không cho phép bôi đen chữ */
+            border-radius: 8px; /* Đây là bo góc đẹp hơn */
+            background-color: #ffffff; /* Nền ô màu trắng */
+            /* Kích thước font chữ thích ứng */
+            font-size: 0.875rem; /* 14px */
         }
-        .tab-inactive {
-            background-color: white;
-            color: #374151; /* gray-700 */
-            /* Thêm viền và bóng mờ */
-            border: 1px solid #d1d5db; /* gray-300 */
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+
+        /* Thêm media query cho màn hình nhỏ hơn */
+        @media (max-width: 640px) {
+            .cell {
+                font-size: 0.75rem; /* 12px */
+                padding: 4px; /* Giảm padding */
+            }
+        }
+        
+        /* Hiệu ứng khi hover */
+        .cell:not(.selected):hover {
+            background-color: #e5e7eb; /* Nền xám nhạt hơn khi hover */
+            transform: scale(1.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        /* Kiểu của ô đã được chọn */
+        .cell.selected {
+            background-color: #ef4444; /* Nền đỏ */
+            color: #ffffff; /* Chữ trắng */
+            text-decoration: line-through;
+            opacity: 0.6;
+            transform: scale(0.9);
+            border-color: #ef4444;
+        }
+
+        /* KHÔNG CẦN Ô TRỐNG NỮA */
+        
+        /* Modal (Hộp thoại thông báo) */
+        .modal {
+            display: none; /* Ẩn mặc định */
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7); /* Nền đen mờ */
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Nội dung modal */
+        .modal-content {
+            background-color: #ffffff; /* Nền nội dung (trắng) */
+            border-radius: 8px;
+            padding: 24px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* Thêm container cho các nút trong modal */
+        .modal-buttons {
+            display: flex;
+            justify-content: space-around; /* Hoặc 'flex-end' với 'space-x-4' */
+            margin-top: 24px;
+            gap: 16px; /* Khoảng cách giữa các nút */
         }
     </style>
     <!-- Tải font Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
-<!-- Thêm nền gradient tinh tế -->
-<body class="bg-gradient-to-br from-gray-50 to-blue-100 min-h-screen">
+<body class="p-4 md:p-8">
 
-    <div class="container mx-auto max-w-4xl p-4 md:p-8">
-        <!-- Tiêu đề được làm nổi bật hơn -->
-        <header class="mb-8 text-center">
-            <h1 class="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-800 bg-clip-text text-transparent pb-2">
-                Tin Tức Logistics Mới Nhất
-            </h1>
-            <p class="text-gray-700 mt-2 text-lg">
-                Cập nhật tin tức mới nhất từ trong nước và quốc tế.
-            </p>
-        </header>
-
-        <!-- Các nút chọn với hiệu ứng transition -->
-        <nav class="flex justify-center space-x-4 mb-8">
-            <button id="domesticBtn" class="px-6 py-3 rounded-lg transition-all duration-300 ease-in-out tab-active">
-                Trong Nước
-            </button>
-            <button id="internationalBtn" class="px-6 py-3 rounded-lg transition-all duration-300 ease-in-out tab-inactive">
-                Quốc Tế
-            </button>
-        </nav>
-
-        <!-- Khu vực hiển thị nội dung -->
-        <main id="contentArea">
-            <!-- Loading Spinner -->
-            <div id="loadingSpinner" class="loader" style="display: none;"></div>
-            
-            <!-- Hiển thị lỗi -->
-            <div id="errorMessage" class="hidden text-center text-red-600 bg-red-100 p-4 rounded-lg shadow-md">
-                <!-- Nội dung lỗi sẽ được chèn vào đây -->
+    <div class="max-w-7xl mx-auto">
+        
+        <!-- Tiêu đề -->
+        <h1 class="text-3xl md:text-4xl font-bold text-center mb-6 text-gray-900">
+            BẢNG TIỀN TIẾT KIỆM
+        </h1>
+        
+        <!-- Bảng số -->
+        <!-- CHÍNH XÁC THEO FILE EXCEL: 16 cột -->
+        <div id="grid-container" class="grid" style="grid-template-columns: repeat(16, minmax(0, 1fr)); gap: 4px;">
+            <!-- Các ô số sẽ được tạo bằng JavaScript -->
+        </div>
+        
+        <!-- Bảng tổng kết -->
+        <div class="mt-8 p-6 bg-white rounded-lg shadow-lg text-center">
+            <div class="text-xl md:text-2xl font-semibold text-gray-700">
+                Tổng đã chọn:
+                <span id="selected-total" class="text-2xl md:text-3xl font-bold text-green-600 ml-2">0</span>
             </div>
-
-            <!-- Nội dung tin tức -->
-            <div id="newsContent" class="space-y-5">
-                <!-- Tin tức sẽ được chèn vào đây -->
+            <div class="text-md md:text-lg text-gray-600 mt-2">
+                Tổng của bảng:
+                <!-- CHÍNH XÁC THEO FILE EXCEL: Tổng mới là 10,000 -->
+                <span class="font-bold text-gray-800 ml-1">10,000</span>
             </div>
+        </div>
 
-            <!-- Nguồn tin (từ Google Search) -->
-            <div id="sourcesContainer" class="hidden mt-10 border-t-2 border-gray-200 pt-6">
-                <h3 class="font-semibold text-xl text-gray-800 mb-4">Nguồn tin tham khảo:</h3>
-                <ul id="sourcesList" class="list-disc list-inside text-sm text-blue-600 space-y-2">
-                    <!-- Nguồn sẽ được chèn vào đây -->
-                </ul>
+    </div>
+    
+    <!-- Modal thông báo -->
+    <div id="alert-modal" class="modal">
+        <div class="modal-content">
+            <p id="modal-message" class="text-lg text-gray-900 mb-6">Đây là thông báo</p>
+            <!-- CẬP NHẬT: Thêm container và 2 nút -->
+            <div class="modal-buttons">
+                <button id="cancel-modal-btn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded-lg transition-colors">
+                    Hủy
+                </button>
+                <button id="confirm-modal-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">
+                    Đồng ý
+                </button>
             </div>
-        </main>
+        </div>
     </div>
 
     <script>
-        // Lấy các phần tử DOM
-        const domesticBtn = document.getElementById('domesticBtn');
-        const internationalBtn = document.getElementById('internationalBtn');
-        const loadingSpinner = document.getElementById('loadingSpinner');
-        const newsContent = document.getElementById('newsContent');
-        const errorMessage = document.getElementById('errorMessage');
-        const sourcesContainer = document.getElementById('sourcesContainer');
-        const sourcesList = document.getElementById('sourcesList');
+        document.addEventListener('DOMContentLoaded', () => {
+            // CHÍNH XÁC THEO FILE EXCEL:
+            // 15 hàng x 16 cột = 240 ô
+            // Tổng của 240 ô này là 10,000
+            const gridNumbers = [
+                200, 5, 10, 10, 5, 100, 5, 20, 5, 100, 20, 5, 20, 50, 50, 5,
+                10, 100, 5, 20, 10, 5, 20, 5, 10, 20, 10, 20, 5, 50, 20, 20,
+                100, 5, 10, 5, 50, 20, 20, 200, 5, 200, 5, 10, 20, 5, 100, 50,
+                50, 20, 200, 200, 100, 20, 10, 20, 10, 50, 10, 5, 10, 20, 5, 10,
+                5, 10, 20, 10, 10, 20, 50, 5, 50, 5, 20, 200, 10, 20, 5, 50,
+                20, 5, 20, 10, 20, 10, 5, 20, 10, 100, 50, 10, 50, 50, 20, 5,
+                50, 100, 20, 5, 20, 5, 500, 10, 5, 5, 10, 5, 100, 5, 20, 100,
+                5, 10, 5, 20, 100, 5, 20, 50, 50, 20, 50, 10, 20, 200, 5, 50,
+                10, 10, 10, 5, 5, 10, 20, 50, 10, 500, 5, 10, 20, 500, 20, 5,
+                50, 5, 20, 20, 200, 5, 20, 20, 5, 10, 50, 200, 5, 20, 100, 50,
+                50, 10, 10, 20, 5, 50, 50, 100, 10, 5, 20, 20, 5, 10, 5, 100,
+                100, 5, 200, 20, 5, 20, 50, 10, 5, 20, 100, 5, 50, 5, 50, 10,
+                5, 10, 50, 20, 10, 100, 200, 5, 50, 5, 100, 20, 200, 5, 20, 5,
+                20, 20, 100, 5, 20, 5, 5, 20, 50, 20, 10, 20, 10, 20, 5, 100,
+                5, 20, 10, 5, 10, 10, 20, 5, 20, 5, 20, 5, 20, 5, 20, 5,
+                100, 5, 20, 10, 100, 5, 10, 100, 5, 10, 5, 100, 20, 10, 5, 20
+            ];
+            
+            const gridContainer = document.getElementById('grid-container');
+            const selectedTotalEl = document.getElementById('selected-total');
+            const modal = document.getElementById('alert-modal');
+            const modalMessage = document.getElementById('modal-message');
+            // SỬA LỖI: Dùng `let` thay vì `const` để có thể gán lại
+            let confirmModalBtn = document.getElementById('confirm-modal-btn');
+            const cancelModalBtn = document.getElementById('cancel-modal-btn');
+            
+            // Tải trạng thái đã lưu từ localStorage
+            const savedState = JSON.parse(localStorage.getItem('savingsTracker')) || [];
 
-        // Khóa API (Để trống, Canvas sẽ tự động cung cấp)
-        const apiKey = "";
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-
-        // System prompt cho mô hình Gemini
-        const systemPrompt = `Bạn là một biên tập viên tin tức logistics chuyên nghiệp.
-Hãy trả về 5 tin tức mới nhất dựa trên truy vấn của người dùng.
-ĐỊNH DẠNG TRẢ LỜI BẮT BUỘC:
-Mỗi tin tức phải theo cấu trúc sau, cách nhau bởi dấu ||:
-Tiêu đề: [Tiêu đề tin tức]||Tóm tắt: [Tóm tắt ngắn gọn trong 1-2 câu]||Nguồn: [Tên nguồn tin]||URL: https://webnhanh.vn/resources/theme/web-khac/
-Các tin tức phải cách nhau bằng một dòng mới.
-KHÔNG thêm bất kỳ lời chào, lời dẫn hay kết luận nào. Chỉ trả về dữ liệu tin tức.`;
-
-        /**
-         * Hàm gọi API với cơ chế thử lại (exponential backoff)
-         */
-        async function fetchWithBackoff(url, options, retries = 3, delay = 1000) {
-            try {
-                const response = await fetch(url, options);
-                if (!response.ok) {
-                    // Nếu lỗi do máy chủ (5xx) hoặc quá tải (429), thử lại
-                    if (response.status === 429 || response.status >= 500) {
-                        throw new Error(`Server error: ${response.status}`);
-                    }
-                    // Các lỗi khác (4xx) thì không thử lại
-                    const errData = await response.json();
-                    throw new Error(errData.error?.message || `Lỗi ${response.status}`);
-                }
-                return response.json();
-            } catch (error) {
-                if (retries > 0) {
-                    // Chờ và thử lại
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    return fetchWithBackoff(url, options, retries - 1, delay * 2);
-                } else {
-                    // Hết số lần thử
-                    console.error("API call failed after retries:", error);
-                    throw error;
-                }
-            }
-        }
-
-        /**
-         * Hàm lấy tin tức từ Gemini API
-         */
-        async function fetchNews(query) {
-            // 1. Đặt trạng thái tải
-            setLoadingState(true);
-
-            // 2. Xây dựng payload
-            const payload = {
-                contents: [{ parts: [{ text: query }] }],
-                tools: [{ "google_search": {} }], // Bật Google Search
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                },
-            };
-
-            // 3. Gọi API
-            try {
-                const result = await fetchWithBackoff(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const candidate = result.candidates?.[0];
-                if (candidate && candidate.content?.parts?.[0]?.text) {
-                    const textResponse = candidate.content.parts[0].text;
-                    const newsArray = parseNewsText(textResponse);
+            // 1. Khởi tạo bảng
+            function initGrid() {
+                gridContainer.innerHTML = ''; // Xóa bảng cũ (nếu có)
+                gridNumbers.forEach((num, index) => {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.innerText = num;
+                    cell.dataset.value = num; // Lưu giá trị vào data-
+                    cell.dataset.id = index; // Lưu index để nhận diện
                     
-                    // Lấy nguồn từ metadata
-                    let sources = [];
-                    const groundingMetadata = candidate.groundingMetadata;
-                    if (groundingMetadata && groundingMetadata.groundingAttributions) {
-                        sources = groundingMetadata.groundingAttributions
-                            .map(attr => ({
-                                uri: attr.web?.uri,
-                                title: attr.web?.title,
-                            }))
-                            .filter(source => source.uri && source.title);
+                    // Kiểm tra xem ô này đã được chọn trong localStorage chưa
+                    if (savedState.includes(index)) {
+                        cell.classList.add('selected');
                     }
-
-                    displayNews(newsArray, sources);
-                } else {
-                    throw new Error("Không nhận được nội dung tin tức hợp lệ từ API.");
-                }
-            } catch (error) {
-                console.error("Lỗi khi lấy tin tức:", error);
-                displayError("Rất tiếc, đã xảy ra lỗi khi tải tin tức. Vui lòng thử lại sau.");
-            } finally {
-                // 4. Tắt trạng thái tải
-                setLoadingState(false);
-            }
-        }
-
-        /**
-         * Hàm phân tích văn bản trả về từ API thành mảng object
-         */
-        function parseNewsText(text) {
-            const articles = [];
-            const lines = text.split('\n').filter(line => line.trim().length > 0);
-
-            for (const line of lines) {
-                const parts = line.split('||');
-                // Yêu cầu 4 phần (Tiêu đề, Tóm tắt, Nguồn, URL)
-                if (parts.length === 4) {
-                    try {
-                        const title = parts[0].replace('Tiêu đề:', '').trim();
-                        const summary = parts[1].replace('Tóm tắt:', '').trim();
-                        const source = parts[2].replace('Nguồn:', '').trim();
-                        const urlPart = parts[3].replace('URL:', '').trim();
-                        
-                        // Chỉ lấy url nếu nó bắt đầu bằng http, ngược lại dùng '#'
-                        const url = (urlPart.startsWith('http')) ? urlPart : '#';
-                        
-                        if (title && summary) { // Nguồn có thể không có
-                            articles.push({ title, summary, source, url });
-                        }
-                    } catch (e) {
-                        console.warn("Bỏ qua dòng định dạng không chính xác:", line);
-                    }
-                } else {
-                    console.warn("Định dạng dòng không mong đợi (cần 4 phần):", line);
-                }
-            }
-            return articles;
-        }
-
-        /**
-         * Hàm hiển thị tin tức lên giao diện
-         */
-        function displayNews(newsArray, sources) {
-            newsContent.innerHTML = ''; // Xóa nội dung cũ
-
-            if (newsArray.length === 0) {
-                newsContent.innerHTML = `<p class="text-center text-gray-500">Không tìm thấy tin tức nào.</p>`;
-            }
-
-            newsArray.forEach(news => {
-                const card = document.createElement('article');
-                // Cập nhật class cho card tin tức
-                const hasLink = news.url && news.url !== '#';
-                card.className = `bg-white p-5 rounded-lg shadow-lg border-l-4 border-blue-500 transition-all duration-300 hover:shadow-xl ${hasLink ? 'hover:scale-[1.02]' : 'hover:scale-[1.01]'}`;
+                    
+                    // Thêm sự kiện click
+                    cell.addEventListener('click', () => toggleCell(cell));
+                    gridContainer.appendChild(cell);
+                });
                 
-                let titleElement;
-                if (hasLink) {
-                    // Nếu có link, làm cho tiêu đề có thể nhấp
-                    titleElement = `
-                        <a href="${news.url}" target="_blank" rel="noopener noreferrer" class="block text-xl font-semibold text-indigo-700 mb-2 hover:text-blue-600 hover:underline">
-                            ${news.title}
-                        </a>
-                    `;
+                updateTotal(); // Cập nhật tổng tiền khi tải trang
+            }
+            
+            // 2. Xử lý khi click vào ô (Hiển thị xác nhận)
+            function toggleCell(cell) {
+                const value = cell.dataset.value;
+                const id = parseInt(cell.dataset.id, 10);
+                const isSelected = cell.classList.contains('selected'); // Lấy trạng thái HIỆN TẠI
+                
+                let message = '';
+                if (!isSelected) {
+                    // Nếu chưa chọn -> hỏi để CHỌN
+                    message = `Bạn có chắc muốn chọn ô số ${value}?`;
                 } else {
-                    // Nếu không có link, chỉ là văn bản
-                    titleElement = `
-                        <h2 class="text-xl font-semibold text-indigo-700 mb-2">${news.title}</h2>
-                    `;
+                    // Nếu đã chọn -> hỏi để BỎ CHỌN
+                    message = `Bạn có chắc muốn BỎ chọn ô số ${value}?`;
                 }
+                
+                // Hiển thị thông báo và chờ người dùng quyết định
+                // Truyền cell, id, và trạng thái 'isSelected' vào hàm showModal
+                showModal(message, cell, id, isSelected);
+            }
 
-                // Cập nhật HTML bên trong card
-                card.innerHTML = `
-                    ${titleElement}
-                    <p class="text-gray-700 mb-4">${news.summary}</p>
-                    ${news.source ? `<div class="mt-3"><span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium">Nguồn: ${news.source}</span></div>` : ''}
-                `;
-                newsContent.appendChild(card);
+            // 3. Thực hiện thay đổi (khi nhấn "Đồng ý")
+            function performToggle(cell, id, isSelected) {
+                // isSelected là trạng thái LÚC CLICK (cũ)
+                if (!isSelected) {
+                    // Trạng thái cũ là "chưa chọn" -> giờ "chọn"
+                    cell.classList.add('selected');
+                    if (!savedState.includes(id)) {
+                        savedState.push(id);
+                    }
+                } else {
+                    // Trạng thái cũ là "đã chọn" -> giờ "bỏ chọn"
+                    cell.classList.remove('selected');
+                    const indexInSaved = savedState.indexOf(id);
+                    if (indexInSaved > -1) {
+                        savedState.splice(indexInSaved, 1);
+                    }
+                }
+                
+                // Cập nhật tổng tiền
+                updateTotal();
+                
+                // Lưu trạng thái mới vào localStorage
+                saveState();
+
+                // Ẩn modal sau khi xong
+                hideModal();
+            }
+            
+            // 4. Cập nhật tổng tiền
+            function updateTotal() {
+                const selectedCells = gridContainer.querySelectorAll('.cell.selected');
+                let currentTotal = 0;
+                selectedCells.forEach(cell => {
+                    currentTotal += parseInt(cell.dataset.value, 10);
+                });
+                
+                // Định dạng số có dấu phẩy
+                selectedTotalEl.innerText = currentTotal.toLocaleString('vi-VN');
+            }
+            
+            // 5. Lưu trạng thái
+            function saveState() {
+                localStorage.setItem('savingsTracker', JSON.stringify(savedState));
+            }
+            
+            // 6. Hiển thị/Ẩn Modal
+            function showModal(message, cell, id, isSelected) {
+                modalMessage.innerText = message;
+                modal.style.display = 'flex';
+
+                // Quan trọng: Gỡ bỏ sự kiện cũ và gán sự kiện mới cho nút "Đồng ý"
+                // Dùng .cloneNode(true) để gỡ bỏ mọi event listener cũ
+                let newConfirmBtn = confirmModalBtn.cloneNode(true);
+                confirmModalBtn.parentNode.replaceChild(newConfirmBtn, confirmModalBtn);
+                confirmModalBtn = newConfirmBtn; // Cập nhật lại biến tham chiếu
+
+                // Gán sự kiện click mới, gọi đến hàm performToggle
+                confirmModalBtn.addEventListener('click', () => {
+                    performToggle(cell, id, isSelected);
+                });
+            }
+            
+            function hideModal() {
+                modal.style.display = 'none';
+            }
+            
+            // Thêm sự kiện cho nút đóng modal (Nút Hủy)
+            cancelModalBtn.addEventListener('click', hideModal);
+            // Cũng có thể đóng khi click ra ngoài
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    hideModal();
+                }
             });
 
-            // Hiển thị nguồn tham khảo
-            displaySources(sources);
-        }
-
-        /**
-         * Hiển thị nguồn tham khảo từ groundingMetadata
-         */
-        function displaySources(sources) {
-            sourcesList.innerHTML = ''; // Xóa nguồn cũ
-            if (sources.length > 0) {
-                sourcesContainer.classList.remove('hidden');
-                sources.forEach(source => {
-                    const li = document.createElement('li');
-                    // Thêm style cho nguồn
-                    li.innerHTML = `<a href="${source.uri}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 hover:underline">${source.title}</a>`;
-                    sourcesList.appendChild(li);
-                });
-            } else {
-                sourcesContainer.classList.add('hidden');
-            }
-        }
-
-        /**
-         * Hàm đặt trạng thái tải (loading)
-         */
-        function setLoadingState(isLoading) {
-            if (isLoading) {
-                loadingSpinner.style.display = 'block';
-                newsContent.innerHTML = ''; // Xóa tin tức cũ
-                errorMessage.classList.add('hidden'); // Ẩn lỗi
-                sourcesContainer.classList.add('hidden'); // Ẩn nguồn
-            } else {
-                loadingSpinner.style.display = 'none';
-            }
-        }
-
-        /**
-         * Hàm hiển thị thông báo lỗi
-         */
-        function displayError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.remove('hidden');
-            newsContent.innerHTML = ''; // Đảm bảo không có tin tức nào hiển thị
-        }
-
-        /**
-         * Hàm cập nhật giao diện nút tab
-         */
-        function updateTabs(activeTab) {
-            if (activeTab === 'domestic') {
-                domesticBtn.classList.replace('tab-inactive', 'tab-active');
-                internationalBtn.classList.replace('tab-active', 'tab-inactive');
-            } else {
-                internationalBtn.classList.replace('tab-inactive', 'tab-active');
-                domesticBtn.classList.replace('tab-active', 'tab-inactive');
-            }
-        }
-
-        // Thêm sự kiện click cho các nút
-        domesticBtn.addEventListener('click', () => {
-            updateTabs('domestic');
-            fetchNews("Tin tức logistics mới nhất tại Việt Nam");
+            // Chạy hàm khởi tạo
+            initGrid();
         });
-
-        internationalBtn.addEventListener('click', () => {
-            updateTabs('international');
-            fetchNews("Tin tức logistics quốc tế mới nhất");
-        });
-
-        // Tải tin tức trong nước khi trang vừa mở
-        window.addEventListener('load', () => {
-            fetchNews("Tin tức logistics mới nhất tại Việt Nam");
-        });
-
     </script>
 </body>
 </html>
-
-
 
